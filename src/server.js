@@ -14,6 +14,7 @@ import auth from "./lib/passport_startegy"; // passport authentication middlewar
 // Import routes files
 import exampleRoutes from "./routes/example_routes";
 import userRoutes from "./routes/user_routes";
+import models from "./db/models";
 
 // instantiate express application object
 const app = express();
@@ -49,10 +50,16 @@ app.use(userRoutes);
 // passed any error messages from them
 app.use(errorHandler);
 
-// run API on designated port (4741 in this case)
-app.listen(port, () => {
-  console.log("listening on port " + port);
+
+
+models.sequelize.sync()
+.then(()=> {
+  console.log('sync complete');
+  app.listen(port, () => {
+    console.log("listening on port " + port);
+  });
 });
+
 
 // needed for testing
 export default app;
