@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {tableName:"messages"});
   Message.associate = function(models) {
     // associations can be defined here
+    Message.belongsTo(models.Member, {
+      foreignKey: "memberId",
+      onDelete: "CASCADE"
+    });
   };
   return Message;
 };

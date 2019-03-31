@@ -52,13 +52,13 @@ app.use(errorHandler);
 
 
 
-models.sequelize.sync()
-.then(()=> {
-  console.log('sync complete');
-  app.listen(port, () => {
-    console.log("listening on port " + port);
-  });
-});
+// models.sequelize.sync()
+// .then(()=> {
+//   console.log('sync complete');
+//   app.listen(port, () => {
+//     console.log("listening on port " + port);
+//   });
+// });
 
 
 // needed for testing

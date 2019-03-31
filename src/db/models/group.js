@@ -5,6 +5,16 @@ module.exports = (sequelize, DataTypes) => {
   }, {tableName:"groups"});
   Group.associate = function(models) {
     // associations can be defined here
+    Group.hasMany(models.Member, {
+      foreignKey: "groupId",
+      as: "members"
+    });
+
+    Group.belongsTo(models.User, {
+      foreignKey: "userId",
+      onDelete: "CASCADE"
+    });
+
   };
   return Group;
 };

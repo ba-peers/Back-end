@@ -5,7 +5,15 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER
   }, {tableName:"members"});
   Member.associate = function(models) {
-    // associations can be defined here
+    Member.belongsTo(models.Group, {
+      foreignKey: "groupId",
+      onDelete: "CASCADE"
+    });
+    
+    Member.hasMany(models.Message, {
+      foreignKey: "memberId",
+      as: "messages"
+    });
   };
   return Member;
 };
