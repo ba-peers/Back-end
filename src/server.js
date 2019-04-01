@@ -12,7 +12,7 @@ import errorHandler from "./lib/error_handler"; //  error handling middleware
 import auth from "./lib/passport_startegy"; // passport authentication middleware
 
 // Import routes files
-import exampleRoutes from "./routes/example_routes";
+import groupRoutes from "./routes/group_routes";
 import userRoutes from "./routes/user_routes";
 import models from "./db/models";
 
@@ -42,7 +42,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // register route files
-app.use(exampleRoutes);
+app.use(groupRoutes);
 app.use(userRoutes);
 
 // register error handling middleware
@@ -60,6 +60,8 @@ app.use(errorHandler);
 //   });
 // });
 
-
+app.listen(port, () => {
+    console.log("listening on port " + port);
+  });
 // needed for testing
 export default app;

@@ -11,6 +11,9 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
+      group_key: {
+        type: Sequelize.STRING
+      },
 
       userId: {
         field: "user_id",
