@@ -5,6 +5,12 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER
   }, {tableName:"members"});
   Member.associate = function(models) {
+
+    Member.belongsTo(models.User, {
+      foreignKey: "userId",
+      onDelete: "CASCADE"
+    });
+    
     Member.belongsTo(models.Group, {
       foreignKey: "groupId",
       onDelete: "CASCADE"
