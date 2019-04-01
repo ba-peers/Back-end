@@ -6,7 +6,7 @@ dotenv.config();
 
 export const jwtOptions = {
   jwtFromRequest: req => req.cookies.jwt,
-  secretOrKey: process.env.PASS_KEY
+  secretOrKey: 'wdiInfinity'
 };
 
 export const localOptions = {
