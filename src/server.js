@@ -13,8 +13,21 @@ import auth from "./lib/passport_startegy"; // passport authentication middlewar
 
 // Import routes files
 import userRoutes from "./routes/user_routes";
-import groupRoutes from "./routes/group_routes";
 import models from "./db/models";
+
+
+let express = require('express');
+let app = require('express')();
+let server = require('http').Server(app);
+let io = require('socket.io')(server);
+let port = 8989;
+ 
+app.use('/assets', express.static(__dirname + '/dist'));
+ 
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+ 
 
 // instantiate express application object
 const app = express();
