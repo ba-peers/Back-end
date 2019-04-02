@@ -12,7 +12,6 @@ import errorHandler from "./lib/error_handler"; //  error handling middleware
 import auth from "./lib/passport_startegy"; // passport authentication middleware
 
 // Import routes files
-import groupRoutes from "./routes/group_routes";
 import userRoutes from "./routes/user_routes";
 import groupRoutes from "./routes/group_routes";
 import models from "./db/models";
@@ -45,7 +44,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // register route files
 app.use(groupRoutes);
 app.use(userRoutes);
-app.use(groupRoutes);
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be
 // passed any error messages from them

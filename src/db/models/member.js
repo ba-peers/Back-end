@@ -1,11 +1,13 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
+  
   const Member = sequelize.define('Member', {
+    member_name:DataTypes.STRING,
     groupId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER
   }, {tableName:"members"});
-  Member.associate = function(models) {
 
+  Member.associate = function(models) {
     Member.belongsTo(models.User, {
       foreignKey: "userId",
       onDelete: "CASCADE"
