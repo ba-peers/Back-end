@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     
     Member.hasMany(models.Message, {
-      foreignKey: "memberId",
+      foreignKey: "member_name",
       as: "messages"
     });
   };

@@ -8,22 +8,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      dateCol: {
-        type: Sequelize.DATE
-      },
-      timeCol: {
-        type: Sequelize.TIME
-      },
       body: {
         type: Sequelize.STRING
       },
-      memberName: {
-        field: "member_name",
+      memberName: { 
+        field:"member_name",
         type: Sequelize.STRING,
         onDelete: "CASCADE",
-        references: {
-          model: "members",
-        }
+        
       },
       createdAt: {
         field: "created_at",

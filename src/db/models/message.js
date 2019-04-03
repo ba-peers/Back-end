@@ -1,16 +1,16 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Message = sequelize.define('Message', {
-    dateCol: DataTypes.DATE,
-    timeCol: DataTypes.TIME,
-    body: DataTypes.STRING
+    body: DataTypes.STRING,
+    memberName: DataTypes.STRING
   }, {tableName:"messages"});
   Message.associate = function(models) {
     // associations can be defined here
     Message.belongsTo(models.Member, {
-      foreignKey: "memberId",
+      foreignKey: "member_name",
       onDelete: "CASCADE"
     });
+
   };
   return Message;
 };

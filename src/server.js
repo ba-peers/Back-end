@@ -14,6 +14,7 @@ import auth from "./lib/passport_startegy"; // passport authentication middlewar
 // Import routes files
 import userRoutes from "./routes/user_routes";
 import groupRoutes from "./routes/group_routes";
+import homeRoute from "./routes/home_route";
 import models from "./db/models";
 
 const http = require("http");
