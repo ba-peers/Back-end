@@ -3,9 +3,12 @@ import models from "../db/models";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 
+const Sequelize = require('sequelize');
+
 // instantiate a router (mini app that only handles routes)
 const router = express.Router();
 
+const Op = Sequelize.Op;
 
 const tokenAuth = passport.authenticate("jwt", { session: false });
 // const localAuth = passport.authenticate("local", { session: false });
@@ -13,27 +16,35 @@ const tokenAuth = passport.authenticate("jwt", { session: false });
 
 const Group = models.Group;
 
-router.get("/group",(req, res) => {
-    // if (!req.body.passwords.new) throw new BadParamsError();
-    Group.findAll()
-    .then(group => {
-        res.status(200).json({ group });
-    })
-    .catch(e => console.log("HELLO"+e));
-});
+// router.get("/group",(req, res) => {
+//     // if (!req.body.passwords.new) throw new BadParamsError();
+//     Group.findAll()
+//     .then(group => {
+//         res.status(200).json({ group });
+//     })
+//     .catch(e => console.log("HELLO"+e));
+// });
 
 router.post("/group/:group_key", tokenAuth, (req, res) => {
-    const userId = req.user.id;
+    const userIds = req.user.id;
     models.Group.findOne({
         where:{
-            group_key: req.params.group_key
+            group_key: req.params.group_key,
+            // userId:{
+            //   [Op.ne]: userIds
+            // }
         }
     })
     .then(group =>{
         return models.Member.create({
             member_name:req.body.member_name,
             groupId: group.id,
-            userId: userId
+            userId: userIds,
+            // where:{
+            //   userId:{
+            //     [Op.ne]:userIds
+            //   }
+            // }
         })
     })
     .then(member => res.status(200).json({ member }))
@@ -59,38 +70,69 @@ router.get("/group/:group_key/member", (req, res) => {
     .catch(e => console.log(e));
 });
 
- //get all the groups///
- router.get('/groups', tokenAuth, (req, res)=>{
-   models.Group.findOne({
-     where:{
-      userId:req.user.id
-     }
-   })
-   .then(groups => {
-    res.status(200).json({groups:groups})
-   })
- .catch(e=> console.log(e));
- });
+ //get all the groups/// this is work
+//  router.get('/groups', tokenAuth, (req, res)=>{
+//   const userId = req.user.id;
+//    models.Group.findOne({
+//      where:{
+//       userId:userId,
+//       groupId:req.params.id
+//      }
+//    })
+//    .then(groups => {
+//     res.status(200).json({groups:groups})
+//    })
+//  .catch(e=> console.log(e));
+//  });
+///// TRY TRY TRY
+router.get('/group', tokenAuth, (req, res , next)=>{
+  const userId = req.user.id;
+  //  models.Member.findAll({
+  //   //  where:{
+  //   //   userId:userId,
+  //   // //   // id:req.params.id
+  //   //  },
+  //    include: [
+  //     {
+  //      model: "groups",
+  //      through: { attributes: [userId] }
+  //     }
+  //   ]
+  //  })
 
- /// get Group by record ID ///
- router.get('/group/:id',(req,res)=>{
-   models.Group.findByPk(req.params.id)
-   .then(group => {
-     res.status(200).json({group:group})
-   })
-    .catch(e=> console.log(e));
+  models.User.findOne({
+    attributes: ["id"], 
+    where: {id:userId}, 
+    include: [{ model: models.Member, as:"members" ,attributes: ["id"], include: [{ model: models.Group  ,    attributes: ["id" , "name"],}]}]
+
   })
-////////////////////
+   .then(user => {
+  //      models.Group.findAll({
+  //       where:{
+  //          id:member.groupId
+  //       }
+  //     })
+  //  .then(member => res.status(200).json({ member }))
 
+    res.status(200).json({user})
+   })
+   .catch(e=>next(e));
+ });
+// });
+/////
   router.delete('/group/:id',tokenAuth,(req,res)=> {
+    // const userIds = req.user.id;
+
     models.Group.findOne({
      where:{
-       id:req.params.id,
+          id:req.params.id,
+          //  userId:userIds,
        // userId:req.user.id
       }
     }).then(group => {
       models.Member.destroy({
         where:{
+          // userId:userIds,
           groupId:group.id
         }
       }).then(()=> {
@@ -105,16 +147,15 @@ router.get("/group/:group_key/member", (req, res) => {
  })
 
 //////////////
- // create new group//
+ 
   router.post('/new-group', tokenAuth,
   (req, res) => {
      const userId = req.user.id;
-
+     
    models.Group.create({
     name: req.body.name,
     group_key: req.body.group_key,
     userId:userId
-      
    }).then(groupNew => {
       // console.log(groupNew)
     res.send(JSON.stringify(groupNew))
@@ -122,24 +163,6 @@ router.get("/group/:group_key/member", (req, res) => {
     .catch(e => console.log(e));
  });
 
- //delete an group by its ID//
-//  router.delete('/group/:id',tokenAuth,(req,res)=> {
-//    models.Group.findOne({
-//     where:{
-//       id:req.params.id,
-//       // userId:req.user.id
-//      }
-//    }).then(group => {
-//     group.destroy().then(()=> {
-//         res.status(200).json({
-//             result: `Group ID ${req.params.id} Deleted` , 
-//             success: true
-//         });
-//     })
-//     .catch(e => console.log(e));
-//  })
-//    .catch(e => console.log(e));
-// })
 
 // Update an existing Group//  
 router.put('/group/:id', (req, res) => {

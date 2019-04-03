@@ -13,77 +13,16 @@ import auth from "./lib/passport_startegy"; // passport authentication middlewar
 
 // Import routes files
 import userRoutes from "./routes/user_routes";
+import groupRoutes from "./routes/group_routes";
+import homeRoute from "./routes/home_routes";
 import models from "./db/models";
+
+const http = require("http");
+const socketIo = require("socket.io");
+const axios = require("axios");
+
 const app = express();
 
-// let express = require('express');
-// let app = require('express')();
-// let server = require('http').Server(app);
-// let io = require('socket.io')(server);
-// let port = 8989;
-const socketIo = require("socket.io");
-
-app.use('/assets', express.static(__dirname + '/dist'));
- 
-app.get('/message', (req, res) => {
-
-
-     res.sendFile(__dirname);
- });
- 
-
-// const express = require("express");
-const http = require("http");
-const axios = require("axios");
-// const index = require("/routes/index");
-// app.use(index);
-const server = http.createServer(app);
-const io = socketIo(server); // < Interesting!
-
-
-let users = {};
- 
-// getUsers = () => {
-//     return Object.keys(users).map(function(key){
-//         return users[key].username
-//     });
-// };
- 
-io.on('connection', (socket) => {
-    let query = socket.request._query,
-        user = {
-            username : query.username,
-            uid : query.uid,
-            socket_id : socket.id
-        };
- 
-    if(users[user.uid] !== undefined){
-        createSocket(user);
-        socket.emit('updateUsersList', getUsers());
-    }
-    else{
-        createUser(user);
-        io.emit('updateUsersList', getUsers());
-    }
- 
-    socket.on('message', (data) => {
-        socket.broadcast.emit('message', {
-            username : data.username,
-            message : data.message,
-            uid : data.uid
-        });
-    });
- 
-    socket.on('disconnect', () => {
-        removeSocket(socket.id);
-        io.emit('updateUsersList', getUsers());
-    });
-});
-
-
-
-// instantiate express application object
-// const app = express();
 
 // set CORS headers on response from this API using the `cors` NPM package
 // `CLIENT_ORIGIN` is an environment variable that will be set on Heroku
@@ -110,19 +49,32 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // register route files
 app.use(groupRoutes);
 app.use(userRoutes);
+app.use(homeRoute);
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be
 // passed any error messages from them
 app.use(errorHandler);
 
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
+server.listen(port, () => {
+  console.log("listening on port " + port);
+});
 
-// models.sequelize.sync()
-// .then(()=> {
-//   console.log('sync complete');
+io.on("connection", socket => {
 
-app.listen(port, () => {
-    console.log("listening on port " + port);
-  });
-// needed for testing
+  socket.on('SEND_MESSAGE', function (data){
+    console.log(data) // we can pass it to database from here
+
+    models.Message.create({
+      body: data.message,
+      member_name: data.author
+     
+  })
+    io.emit('RECEIVE_MESSAGE', data)
+  })
+  socket.on("disconnect", () => console.log("Client disconnected"));
+});
+
 export default app;
