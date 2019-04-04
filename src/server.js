@@ -24,9 +24,15 @@ const axios = require("axios");
 const app = express();
 
 
+const corsOptions = {
+ origin: '*',
+ credentials: true };
+
+app.use(cors(corsOptions));
+
 // set CORS headers on response from this API using the `cors` NPM package
 // `CLIENT_ORIGIN` is an environment variable that will be set on Heroku
-app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
+// app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
 
 // define port for API to run on
 const port = process.env.PORT;

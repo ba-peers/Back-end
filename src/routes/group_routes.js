@@ -70,36 +70,9 @@ router.get("/group/:group_key/member", (req, res) => {
     .catch(e => console.log(e));
 });
 
- //get all the groups/// this is work
-//  router.get('/groups', tokenAuth, (req, res)=>{
-//   const userId = req.user.id;
-//    models.Group.findOne({
-//      where:{
-//       userId:userId,
-//       groupId:req.params.id
-//      }
-//    })
-//    .then(groups => {
-//     res.status(200).json({groups:groups})
-//    })
-//  .catch(e=> console.log(e));
-//  });
-///// TRY TRY TRY
+// list my group that i joined
 router.get('/group', tokenAuth, (req, res , next)=>{
   const userId = req.user.id;
-  //  models.Member.findAll({
-  //   //  where:{
-  //   //   userId:userId,
-  //   // //   // id:req.params.id
-  //   //  },
-  //    include: [
-  //     {
-  //      model: "groups",
-  //      through: { attributes: [userId] }
-  //     }
-  //   ]
-  //  })
-
   models.User.findOne({
     attributes: ["id"], 
     where: {id:userId}, 
@@ -107,12 +80,6 @@ router.get('/group', tokenAuth, (req, res , next)=>{
 
   })
    .then(user => {
-  //      models.Group.findAll({
-  //       where:{
-  //          id:member.groupId
-  //       }
-  //     })
-  //  .then(member => res.status(200).json({ member }))
 
     res.status(200).json({user})
    })
